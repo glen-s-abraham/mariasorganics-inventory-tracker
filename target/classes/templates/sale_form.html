@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${sale.id != null ? 'Edit Sale' : 'New Sale'}"></title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 th:text="${sale.id != null ? 'Edit Sale' : 'New Sale'}" style="margin-bottom: 2rem;"></h1>
+
+    <!-- Flash Messages -->
+   <div th:if="${error}" class="alert alert-error" style="padding: 1rem; background-color: #ef4444; color: white; border-radius: 0.5rem; margin-bottom: 1rem;">
+        <span th:text="${error}"></span>
+    </div>
+
+    <div class="card">
+        <form th:action="${sale.id != null ? '/sales/' + sale.id : '/sales'}" method="post">
+            <!-- Product Selection -->
+            <div class="form-group">
+                <label for="productId">Product *</label>
+                <select id="productId" name="productId" required onchange="loadBatches()">
+                    <option value="">Select a product</option>
+                    <option th:each="product : ${products}" 
+                            th:value="${product.id}" 
+                            th:text="${product.name}"
+                            th:selected="${sale.product != null && sale.product.id == product.id}">
+                    </option>
+                </select>
+            </div>
+
+            <!-- Batch Selection -->
+            <div class="form-group">
+                <label for="inventoryId">Batch Code *</label>
+                <select id="inventoryId" name="inventoryId" required onchange="updateAvailableQuantity()">
+                    <option value="">Select a batch</option>
+                    <option th:each="batch : ${batches}"
+                            th:value="${batch.id}"
+                            th:text="${batch.batchCode + ' (Available: ' + batch.quantity + ')'}"
+                            th:selected="${sale.inventory != null && sale.inventory.id == batch.id}">
+                    </option>
+                </select>
+                <small id="availableQtyDisplay" style="color: var(--text-muted); display: block; margin-top: 0.5rem;"></small>
+            </div>
+
+            <!-- Quantity -->
+            <div class="form-group">
+                <label for="quantity">Quantity *</label>
+                <input type="number" id="quantity" name="quantity" th:value="${sale.quantity}" 
+                       min="1" required placeholder="Enter quantity">
+            </div>
+
+            <!-- Selling Price -->
+            <div class="form-group">
+                <label for="sellingPrice">Selling Price (per unit) *</label>
+                <input type="number" id="sellingPrice" name="sellingPrice" th:value="${sale.sellingPrice}" 
+                       step="0.01" min="0.01" required placeholder="0.00">
+            </div>
+
+            <!-- Sale Date -->
+            <div class="form-group">
+                <label for="saleDate">Sale Date *</label>
+                <input type="date" id="saleDate" name="saleDate" 
+                       th:value="${sale.saleDate != null ? sale.saleDate : T(java.time.LocalDate).now()}" required>
+            </div>
+
+            <!-- Buttons -->
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn">Save Sale</button>
+                <a th:href="@{/sales}" class="btn" style="background-color: white; color: var(--text-color); border: 1px solid var(--border-color);">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let batchesData = [];
+
+        // Load batches when product changes
+        async function loadBatches() {
+            const productId = document.getElementById('productId').value;
+            const inventorySelect = document.getElementById('inventoryId');
+            const currentInventoryId = '[[${sale.inventory?.id}]]'; // Current batch in edit mode
+            
+            // Clear current batches
+            inventorySelect.innerHTML = '<option value="">Select a batch</option>';
+            document.getElementById('availableQtyDisplay').textContent = '';
+            
+            if (!productId) {
+                return;
+            }
+
+            try {
+                // FIX: Include current inventory ID so it shows even if 0 qty
+                let url = `/api/batches/by-product/${productId}`;
+                if (currentInventoryId) {
+                    url += `?includeInventoryId=${currentInventoryId}`;
+                }
+                
+                const response = await fetch(url);
+                batchesData = await response.json();
+                
+                if (batchesData.length === 0) {
+                    inventorySelect.innerHTML += '<option value="" disabled>No available batches (check inventory or expiry)</option>';
+                } else {
+                    batchesData.forEach(batch => {
+                        const option = document.createElement('option');
+                        option.value = batch.id;
+                        option.textContent = `${batch.batchCode} (Available: ${batch.quantity})`;
+                        inventorySelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading batches:', error);
+            }
+        }
+
+        // Update available quantity display
+        function updateAvailableQuantity() {
+            const inventoryId = document.getElementById('inventoryId').value;
+            const display = document.getElementById('availableQtyDisplay');
+            const quantityInput = document.getElementById('quantity');
+            const currentSaleQty = parseInt('[[${sale.quantity}]]') || 0; // Current sale quantity in edit mode
+            const currentInventoryId = '[[${sale.inventory?.id}]]'; // Current batch in edit mode
+            
+            if (!inventoryId) {
+                display.textContent = '';
+                quantityInput.removeAttribute('max');
+                return;
+            }
+
+            const selectedBatch = batchesData.find(b => b.id == inventoryId);
+            if (selectedBatch) {
+                const batchAvailable = selectedBatch.quantity;
+                
+                // FIX: In edit mode, if same batch, add current sale quantity to effective available
+                const isSameBatch = (inventoryId == currentInventoryId);
+                const effectiveAvailable = isSameBatch ? batchAvailable + currentSaleQty : batchAvailable;
+                
+                display.textContent = `Available Quantity: ${batchAvailable}`;
+                if (isSameBatch && currentSaleQty > 0) {
+                    display.textContent += ` (+ ${currentSaleQty} from this sale = ${effectiveAvailable} effective)`;
+                }
+                
+                // Set max to effective available
+                quantityInput.setAttribute('max', effectiveAvailable);
+                
+                // Show expiry info if available
+                if (selectedBatch.expiryDate) {
+                    display.textContent += ` | Expires: ${selectedBatch.expiryDate}`;
+                }
+            }
+        }
+
+        // Load batches on page load if product is already selected (edit mode)
+        window.addEventListener('DOMContentLoaded', () => {
+            const productId = document.getElementById('productId').value;
+            if (productId) {
+                loadBatches().then(() => {
+                    // Re-select the inventory if editing
+                    const inventoryId = '[[${sale.inventory?.id}]]';
+                    if (inventoryId) {
+                        document.getElementById('inventoryId').value = inventoryId;
+                        updateAvailableQuantity();
+                    }
+                });
+            }
+        });
+    </script>
+</div>
+</body>
+</html>

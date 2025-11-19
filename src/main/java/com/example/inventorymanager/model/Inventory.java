@@ -4,7 +4,12 @@ import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 @Entity
+@SQLDelete(sql = "UPDATE inventory SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 public class Inventory {
 
     @Id
@@ -12,7 +17,7 @@ public class Inventory {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false, foreignKey = @ForeignKey(name = "fk_inventory_product"))
     private Product product;
 
     private Integer quantity;
@@ -26,6 +31,8 @@ public class Inventory {
     private String batchCode;
 
     private Long batchSequence;
+
+    private boolean deleted = false;
 
     @Transient
     private Integer expiryDays;

@@ -3,6 +3,7 @@ package com.example.inventorymanager.service;
 import com.example.inventorymanager.model.Inventory;
 import com.example.inventorymanager.model.Product;
 import com.example.inventorymanager.repository.InventoryRepository;
+import com.example.inventorymanager.repository.SaleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,10 +23,12 @@ import jakarta.persistence.criteria.Predicate;
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
+    private final SaleRepository saleRepository;
 
     @Autowired
-    public InventoryService(InventoryRepository inventoryRepository) {
+    public InventoryService(InventoryRepository inventoryRepository, SaleRepository saleRepository) {
         this.inventoryRepository = inventoryRepository;
+        this.saleRepository = saleRepository;
     }
 
     public Page<Inventory> getInventoryByProduct(Long productId, int pageNo, int pageSize,
@@ -93,7 +96,56 @@ public class InventoryService {
         return inventoryRepository.save(inventory);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void deleteInventory(Long id) {
+        // Auto-remove associated sales (orphan removal)
+        saleRepository.deleteByInventoryId(id);
+
         inventoryRepository.deleteById(id);
+    }
+
+    /**
+     * Update inventory quantity (used by sales)
+     * 
+     * @param inventoryId    The inventory batch ID
+     * @param quantityChange The change in quantity (negative for sales, positive
+     *                       for reversals)
+     */
+    public void updateQuantity(Long inventoryId, int quantityChange) {
+        Optional<Inventory> inventoryOpt = inventoryRepository.findById(inventoryId);
+        if (inventoryOpt.isPresent()) {
+            Inventory inventory = inventoryOpt.get();
+            int newQuantity = inventory.getQuantity() + quantityChange;
+            if (newQuantity < 0) {
+                throw new IllegalStateException("Inventory quantity cannot be negative. Batch: " +
+                        inventory.getBatchCode() + ", Current: " + inventory.getQuantity() +
+                        ", Change: " + quantityChange);
+            }
+            inventory.setQuantity(newQuantity);
+            inventoryRepository.save(inventory);
+        } else {
+            throw new IllegalArgumentException("Inventory not found with id: " + inventoryId);
+        }
+    }
+
+    /**
+     * Get available quantity for a batch
+     */
+    public int getAvailableQuantity(Long inventoryId) {
+        return inventoryRepository.findById(inventoryId)
+                .map(Inventory::getQuantity)
+                .orElse(0);
+    }
+
+    /**
+     * Get all batches with available quantity for a product
+     */
+    public List<Inventory> getAvailableBatches(Long productId) {
+        Specification<Inventory> spec = (root, query, criteriaBuilder) -> {
+            Predicate productMatch = criteriaBuilder.equal(root.get("product").get("id"), productId);
+            Predicate quantityGreaterThanZero = criteriaBuilder.greaterThan(root.get("quantity"), 0);
+            return criteriaBuilder.and(productMatch, quantityGreaterThanZero);
+        };
+        return inventoryRepository.findAll(spec);
     }
 }

@@ -17,7 +17,7 @@
         <aside class="sidebar">
             <div class="logo">
                 <i class="fa-solid fa-box-open"></i>
-                <span>D-inventy</span>
+                <span>M-Tracker</span>
             </div>
             <nav class="nav-menu">
                 <a th:href="@{/}" class="nav-link" th:classappend="${requestURI == '/' ? 'active' : ''}">
@@ -27,6 +27,10 @@
                 <a th:href="@{/products}" class="nav-link" th:classappend="${requestURI.startsWith('/products') ? 'active' : ''}">
                     <i class="fa-solid fa-boxes-stacked"></i>
                     <span>Products</span>
+                </a>
+                <a th:href="@{/sales}" class="nav-link" th:classappend="${requestURI.startsWith('/sales') ? 'active' : ''}">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Sales</span>
                 </a>
             </nav>
             
@@ -44,10 +48,6 @@
             <header class="top-header">
                 <h2 th:text="${title}">Dashboard</h2>
                 <div class="user-profile">
-                    <div class="search-bar">
-                        <i class="fa-solid fa-search"></i>
-                        <input type="text" placeholder="Search anything...">
-                    </div>
                     <div class="profile-icon">
                         <img src="https://ui-avatars.com/api/?name=User&background=random" alt="User">
                     </div>

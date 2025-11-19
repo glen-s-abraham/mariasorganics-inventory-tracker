@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -116,8 +117,16 @@ public class InventoryController {
 
     @GetMapping("/delete/{id}")
     public String deleteInventory(@PathVariable("productId") Long productId,
-            @PathVariable("id") Long id) {
-        inventoryService.deleteInventory(id);
+            @PathVariable("id") Long id,
+            RedirectAttributes redirectAttributes) {
+        try {
+            inventoryService.deleteInventory(id);
+            redirectAttributes.addFlashAttribute("message", "Inventory batch deleted successfully!");
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "An error occurred while deleting the inventory batch.");
+        }
         return "redirect:/products/" + productId + "/inventory";
     }
 }

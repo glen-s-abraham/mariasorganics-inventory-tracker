@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Sales</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h1 style="margin-bottom: 0.5rem;">Sales</h1>
+            <p style="color: var(--text-muted);">Track and manage product sales</p>
+        </div>
+        <a th:href="@{/sales/new}" class="btn">+ New Sale</a>
+    </div>
+
+    <!-- Flash Messages -->
+    <div th:if="${message}" class="alert alert-success" style="padding: 1rem; background-color: #10b981; color: white; border-radius: 0.5rem; margin-bottom: 1rem;">
+        <span th:text="${message}"></span>
+    </div>
+    <div th:if="${error}" class="alert alert-error" style="padding: 1rem; background-color: #ef4444; color: white; border-radius: 0.5rem; margin-bottom: 1rem;">
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- Sales Table -->
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Sale Date</th>
+                    <th>Product</th>
+                    <th>Batch Code</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="sale : ${sales}">
+                    <td th:text="${#temporals.format(sale.saleDate, 'yyyy-MM-dd')}"></td>
+                    <td th:text="${sale.product.name}"></td>
+                    <td th:text="${sale.inventory.batchCode}"></td>
+                    <td th:text="${sale.quantity}"></td>
+                    <td th:text="${'₹' + #numbers.formatDecimal(sale.sellingPrice, 1, 2)}"></td>
+                    <td th:text="${'₹' + #numbers.formatDecimal(sale.totalAmount, 1, 2)}" style="font-weight: 600;"></td>
+                    <td>
+                        <a th:href="@{/sales/{id}/edit(id=${sale.id})}" style="color: var(--primary-color); text-decoration: none; margin-right: 1rem;">Edit</a>
+                        <a th:href="@{/sales/{id}/delete(id=${sale.id})}" 
+                           onclick="return confirm('Are you sure? This will restore the inventory quantity.')" 
+                           style="color: #ef4444; text-decoration: none;">Delete</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(sales)}">
+                    <td colspan="7" style="text-align: center; color: var(--text-muted);">No sales found</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div th:if="${totalPages > 1}" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+            <span style="color: var(--text-muted); font-size: 0.875rem;">
+                Showing page <span th:text="${currentPage}"></span> of <span th:text="${totalPages}"></span> 
+                (Total: <span th:text="${totalItems}"></span> sales)
+            </span>
+            <div style="display: flex; gap: 0.5rem;">
+                <a th:href="@{/sales(page=${currentPage - 1}, sortField=${sortField}, sortDir=${sortDir})}"
+                   th:classappend="${currentPage == 1} ? 'disabled' : ''"
+                   class="btn" style="background-color: white; color: var(--text-color); border: 1px solid var(--border-color);">
+                    Previous
+                </a>
+                <a th:href="@{/sales(page=${currentPage + 1}, sortField=${sortField}, sortDir=${sortDir})}"
+                   th:classappend="${currentPage == totalPages} ? 'disabled' : ''"
+                   class="btn" style="background-color: white; color: var(--text-color); border: 1px solid var(--border-color);">
+                    Next
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
