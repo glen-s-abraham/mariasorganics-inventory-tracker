@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Inventory - Inventory Manager</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div>
+                <h2 th:text="'Inventory for ' + ${product.name}">Inventory for Product</h2>
+                <p style="color: var(--text-muted); margin-top: 0.25rem;">Manage stock levels and batches</p>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a th:href="@{/products}" class="btn" style="background-color: white; color: var(--text-color); border: 1px solid var(--border-color);">Back to Products</a>
+                <a th:href="@{/products/{productId}/inventory/new(productId=${product.id})}" class="btn"><i class="fa-solid fa-plus" style="margin-right: 0.5rem;"></i> Add Inventory</a>
+            </div>
+        </div>
+        
+        <div class="card" style="padding: 0;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Batch Code</th>
+                        <th>Quantity</th>
+                        <th>Entry Date</th>
+                        <th>Expiry Date</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="inventory : ${inventoryList}">
+                        <td th:text="${inventory.batchCode}">BATCH-001</td>
+                        <td th:text="${inventory.quantity}">100</td>
+                        <td th:text="${inventory.entryDate}">2023-01-01</td>
+                        <td th:text="${inventory.expiryDate != null ? inventory.expiryDate : 'N/A'}">2023-12-31</td>
+                        <td style="text-align: right;">
+                            <a th:href="@{/products/{productId}/inventory/edit/{id}(productId=${product.id}, id=${inventory.id})}" style="color: var(--primary-color); text-decoration: none; margin-right: 1rem; font-weight: 500;">Edit</a>
+                            <a th:href="@{/products/{productId}/inventory/delete/{id}(productId=${product.id}, id=${inventory.id})}" style="color: #ef4444; text-decoration: none; font-weight: 500;" onclick="return confirm('Are you sure you want to delete this inventory entry?')">Delete</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(inventoryList)}">
+                        <td colspan="5" style="padding: 2rem; text-align: center; color: var(--text-muted);">No inventory records found.</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <!-- Pagination Controls -->
+            <div th:if="${totalPages > 1}" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-top: 1px solid var(--border-color);">
+                <div style="color: var(--text-muted); font-size: 0.875rem;">
+                    Showing <span th:text="${inventoryPage.numberOfElements}">5</span> of <span th:text="${totalItems}">10</span> entries
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <a th:if="${currentPage > 1}" th:href="@{/products/{productId}/inventory(productId=${product.id}, page=${currentPage - 1})}" class="btn" style="background-color: white; color: var(--text-color); border: 1px solid var(--border-color); padding: 0.4rem 0.8rem;">Previous</a>
+                    
+                    <span th:each="i : ${#numbers.sequence(1, totalPages)}" style="display: inline-block;">
+                        <a th:href="@{/products/{productId}/inventory(productId=${product.id}, page=${i})}" th:text="${i}" 
+                           th:style="${currentPage == i ? 'background-color: var(--primary-color); color: white; border-color: var(--primary-color);' : 'background-color: white; color: var(--text-color); border: 1px solid var(--border-color);'}"
+                           class="btn" style="padding: 0.4rem 0.8rem;">1</a>
+                    </span>
+                    
+                    <a th:if="${currentPage < totalPages}" th:href="@{/products/{productId}/inventory(productId=${product.id}, page=${currentPage + 1})}" class="btn" style="background-color: white; color: var(--text-color); border: 1px solid var(--border-color); padding: 0.4rem 0.8rem;">Next</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

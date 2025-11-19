@@ -1,0 +1,7 @@
+com\example\inventorymanager\service\ProductService.class
+com\example\inventorymanager\controller\ProductController.class
+com\example\inventorymanager\InventoryManagerApplication.class
+com\example\inventorymanager\controller\HomeController.class
+com\example\inventorymanager\model\Product.class
+com\example\inventorymanager\controller\GlobalControllerAdvice.class
+com\example\inventorymanager\repository\ProductRepository.class

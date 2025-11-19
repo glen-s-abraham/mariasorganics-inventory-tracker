@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Dashboard - Inventory Manager</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        
+        <!-- Dashboard Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value">$73,890</div>
+                <div class="stat-trend trend-up">
+                    <i class="fa-solid fa-arrow-up"></i> 16%
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Shipment</div>
+                <div class="stat-value">389</div>
+                <div class="stat-trend trend-down">
+                    <i class="fa-solid fa-arrow-down"></i> 24%
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Order</div>
+                <div class="stat-value">1865</div>
+                <div class="stat-trend trend-up">
+                    <i class="fa-solid fa-arrow-up"></i> 12%
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Avg Delivery Time</div>
+                <div class="stat-value">4.5 Days</div>
+                <div class="stat-trend trend-up">
+                    <i class="fa-solid fa-arrow-up"></i> 18%
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Welcome</h2>
+            <p>This is your modern inventory management dashboard.</p>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <a th:href="@{/products}" class="btn">Manage Products</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
