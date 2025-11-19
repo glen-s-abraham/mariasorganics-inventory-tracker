@@ -1,6 +1,7 @@
 package com.example.inventorymanager.model;
 
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Entity
@@ -16,13 +17,18 @@ public class Inventory {
 
     private Integer quantity;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate entryDate;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate expiryDate;
 
     private String batchCode;
 
     private Long batchSequence;
+
+    @Transient
+    private Integer expiryDays;
 
     public Inventory() {
     }
@@ -81,5 +87,13 @@ public class Inventory {
 
     public void setBatchSequence(Long batchSequence) {
         this.batchSequence = batchSequence;
+    }
+
+    public Integer getExpiryDays() {
+        return expiryDays;
+    }
+
+    public void setExpiryDays(Integer expiryDays) {
+        this.expiryDays = expiryDays;
     }
 }

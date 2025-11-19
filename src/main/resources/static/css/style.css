@@ -218,6 +218,201 @@ tr:last-child td {
     background-color: var(--primary-hover);
 }
 
+overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    height: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    flex-shrink: 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 2.5rem;
+}
+
+.logo i {
+    color: var(--text-color);
+    /* Black logo icon as per design */
+    font-size: 1.5rem;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: var(--text-muted);
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-color);
+}
+
+.nav-link.active {
+    background-color: var(--primary-light);
+    /* Light blue active state */
+    color: var(--primary-color);
+    /* Blue text */
+}
+
+.nav-link i {
+    width: 20px;
+    text-align: center;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.top-header {
+    height: 70px;
+    background-color: var(--sidebar-bg);
+    /* White header */
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+}
+
+.top-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: var(--background-color);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    width: 300px;
+}
+
+.search-bar i {
+    color: var(--text-muted);
+    margin-right: 0.5rem;
+}
+
+.search-bar input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    font-family: inherit;
+    color: var(--text-color);
+}
+
+.profile-icon img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+/* Cards */
+.card {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    padding: 1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.875rem;
+}
+
+td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-size: 0.875rem;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 0.875rem;
+}
+
+.btn:hover {
+    background-color: var(--primary-hover);
+}
+
 /* Forms */
 .form-group {
     margin-bottom: 1.25rem;
@@ -233,6 +428,203 @@ label {
 
 input[type="text"],
 input[type="number"],
+input[type="date"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    font-family: inherit;
+    font-size: 0.875rem;
+    transition: border-color 0.2s;
+    background-color: #fff;
+}
+
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Stats Cards (for Dashboard) */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid var(--border-color);
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.stat-trend {
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.nav-link i {
+    width: 20px;
+    text-align: center;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.top-header {
+    height: 70px;
+    background-color: var(--sidebar-bg);
+    /* White header */
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+}
+
+.top-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: var(--background-color);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    width: 300px;
+}
+
+.search-bar i {
+    color: var(--text-muted);
+    margin-right: 0.5rem;
+}
+
+.search-bar input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    font-family: inherit;
+    color: var(--text-color);
+}
+
+.profile-icon img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+/* Cards */
+.card {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    padding: 1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.875rem;
+}
+
+td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    font-size: 0.875rem;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 0.875rem;
+}
+
+.btn:hover {
+    background-color: var(--primary-hover);
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.875rem;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
 textarea {
     width: 100%;
     padding: 0.6rem 1rem;
@@ -292,4 +684,49 @@ textarea:focus {
 
 .trend-down {
     color: #ef4444;
+}
+
+/* Filter Bar */
+.filter-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    margin-bottom: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding-bottom: 2px;
+    /* Align with inputs */
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-input-wrapper i {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.search-input-wrapper input {
+    padding-left: 2.5rem;
 }

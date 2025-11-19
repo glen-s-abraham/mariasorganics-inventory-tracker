@@ -36,8 +36,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="expiryDate">Expiry Date (Optional)</label>
-                        <input type="date" id="expiryDate" th:field="*{expiryDate}" class="form-control">
+                        <label for="expiryDays">Expiry Days (Optional)</label>
+                        <input type="number" id="expiryDays" th:field="*{expiryDays}" class="form-control" min="0" placeholder="Enter number of days">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expiryDate">Expiry Date (Calculated)</label>
+                        <input type="date" id="expiryDate" th:field="*{expiryDate}" class="form-control" readonly style="background-color: #f3f4f6; cursor: not-allowed;">
                     </div>
 
                     <div style="display: flex; gap: 1rem; margin-top: 2rem;">
@@ -47,6 +52,45 @@
                 </form>
             </div>
         </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const entryDateInput = document.getElementById('entryDate');
+            const expiryDaysInput = document.getElementById('expiryDays');
+            const expiryDateInput = document.getElementById('expiryDate');
+
+            function calculateExpiryDate() {
+                const entryDateVal = entryDateInput.value;
+                const expiryDaysVal = parseInt(expiryDaysInput.value);
+
+                if (entryDateVal && !isNaN(expiryDaysVal)) {
+                    const entryDate = new Date(entryDateVal);
+                    const expiryDate = new Date(entryDate);
+                    expiryDate.setDate(entryDate.getDate() + expiryDaysVal);
+                    
+                    // Format to YYYY-MM-DD
+                    const year = expiryDate.getFullYear();
+                    const month = String(expiryDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(expiryDate.getDate()).padStart(2, '0');
+                    
+                    expiryDateInput.value = `${year}-${month}-${day}`;
+                } else {
+                    // If days are cleared, we might want to clear expiry date or leave it if it was manually set (though it's readonly now)
+                    // For now, let's clear it if days are cleared to avoid confusion
+                    if (expiryDaysInput.value === '') {
+                         expiryDateInput.value = '';
+                    }
+                }
+            }
+
+            entryDateInput.addEventListener('change', calculateExpiryDate);
+            expiryDaysInput.addEventListener('input', calculateExpiryDate);
+            
+            // Run on load to populate calculated date if days exist
+            calculateExpiryDate();
+        });
+    </script>
     </div>
 </body>
 </html>

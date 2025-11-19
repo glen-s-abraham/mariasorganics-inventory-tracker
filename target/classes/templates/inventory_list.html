@@ -15,6 +15,63 @@
                 <a th:href="@{/products/{productId}/inventory/new(productId=${product.id})}" class="btn"><i class="fa-solid fa-plus" style="margin-right: 0.5rem;"></i> Add Inventory</a>
             </div>
         </div>
+
+        <!-- Filter Form -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <form th:action="@{/products/{productId}/inventory(productId=${product.id})}" method="get" class="filter-bar">
+                <!-- Search -->
+                <div class="filter-group" style="grid-column: span 2;">
+                    <label for="keyword">Search Batch Code</label>
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="keyword" name="keyword" th:value="${keyword}" placeholder="Search batch code...">
+                    </div>
+                </div>
+                
+                <!-- Date Range -->
+                <div class="filter-group">
+                    <label for="startDate">From Date</label>
+                    <input type="date" id="startDate" name="startDate" th:value="${startDate}">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="endDate">To Date</label>
+                    <input type="date" id="endDate" name="endDate" th:value="${endDate}">
+                </div>
+                
+                <!-- Status -->
+                <div class="filter-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="ALL" th:selected="${status == 'ALL'}">All Stock</option>
+                        <option value="ACTIVE" th:selected="${status == 'ACTIVE'}">Active Stock</option>
+                        <option value="EXPIRED" th:selected="${status == 'EXPIRED'}">Expired Stock</option>
+                    </select>
+                </div>
+
+                <!-- Sort -->
+                <div class="filter-group" style="grid-column: span 2;">
+                    <label for="sortField">Sort By</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <select id="sortField" name="sortField" style="flex: 2;">
+                            <option value="batchCode" th:selected="${sortField == 'batchCode'}">Batch Code</option>
+                            <option value="quantity" th:selected="${sortField == 'quantity'}">Quantity</option>
+                            <option value="entryDate" th:selected="${sortField == 'entryDate'}">Entry Date</option>
+                        </select>
+                        <select id="sortDir" name="sortDir" style="flex: 1;">
+                            <option value="asc" th:selected="${sortDir == 'asc'}">Asc</option>
+                            <option value="desc" th:selected="${sortDir == 'desc'}">Desc</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="filter-actions">
+                    <button type="submit" class="btn">Filter</button>
+                    <a th:href="@{/products/{productId}/inventory(productId=${product.id})}" class="btn" style="background-color: white; color: var(--text-color); border: 1px solid var(--border-color);">Clear</a>
+                </div>
+            </form>
+        </div>
         
         <div class="card" style="padding: 0;">
             <table>
@@ -50,15 +107,15 @@
                     Showing <span th:text="${inventoryPage.numberOfElements}">5</span> of <span th:text="${totalItems}">10</span> entries
                 </div>
                 <div style="display: flex; gap: 0.5rem;">
-                    <a th:if="${currentPage > 1}" th:href="@{/products/{productId}/inventory(productId=${product.id}, page=${currentPage - 1})}" class="btn" style="background-color: white; color: var(--text-color); border: 1px solid var(--border-color); padding: 0.4rem 0.8rem;">Previous</a>
+                    <a th:if="${currentPage > 1}" th:href="@{/products/{productId}/inventory(productId=${product.id}, page=${currentPage - 1}, keyword=${keyword}, startDate=${startDate}, endDate=${endDate}, status=${status}, sortField=${sortField}, sortDir=${sortDir})}" class="btn" style="background-color: white; color: var(--text-color); border: 1px solid var(--border-color); padding: 0.4rem 0.8rem;">Previous</a>
                     
                     <span th:each="i : ${#numbers.sequence(1, totalPages)}" style="display: inline-block;">
-                        <a th:href="@{/products/{productId}/inventory(productId=${product.id}, page=${i})}" th:text="${i}" 
+                        <a th:href="@{/products/{productId}/inventory(productId=${product.id}, page=${i}, keyword=${keyword}, startDate=${startDate}, endDate=${endDate}, status=${status}, sortField=${sortField}, sortDir=${sortDir})}" th:text="${i}" 
                            th:style="${currentPage == i ? 'background-color: var(--primary-color); color: white; border-color: var(--primary-color);' : 'background-color: white; color: var(--text-color); border: 1px solid var(--border-color);'}"
                            class="btn" style="padding: 0.4rem 0.8rem;">1</a>
                     </span>
                     
-                    <a th:if="${currentPage < totalPages}" th:href="@{/products/{productId}/inventory(productId=${product.id}, page=${currentPage + 1})}" class="btn" style="background-color: white; color: var(--text-color); border: 1px solid var(--border-color); padding: 0.4rem 0.8rem;">Next</a>
+                    <a th:if="${currentPage < totalPages}" th:href="@{/products/{productId}/inventory(productId=${product.id}, page=${currentPage + 1}, keyword=${keyword}, startDate=${startDate}, endDate=${endDate}, status=${status}, sortField=${sortField}, sortDir=${sortDir})}" class="btn" style="background-color: white; color: var(--text-color); border: 1px solid var(--border-color); padding: 0.4rem 0.8rem;">Next</a>
                 </div>
             </div>
         </div>

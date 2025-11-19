@@ -31,7 +31,7 @@
                     <tr th:each="product : ${products}">
                         <td th:text="${product.name}">Product Name</td>
                         <td th:text="${product.sku}">SKU123</td>
-                        <td th:text="${'$' + product.price}">$10.00</td>
+                        <td th:text="${'₹' + product.price}">₹10.00</td>
                         <td style="text-align: right;">
                             <a th:href="@{/products/{id}/inventory(id=${product.id})}" style="color: var(--primary-color); text-decoration: none; margin-right: 1rem; font-weight: 500;"><i class="fa-solid fa-boxes-stacked"></i> Inventory</a>
                             <a th:href="@{/products/edit/{id}(id=${product.id})}" style="color: var(--text-muted); text-decoration: none; margin-right: 1rem; font-weight: 500;">Edit</a>
